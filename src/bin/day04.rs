@@ -4,6 +4,7 @@ use anyhow::Result;
 
 fn solve<T: BufRead>(input: T) -> Result<Vec<i64>> {
     let mut res1 = 0;
+    let mut res2 = 0;
     for line in input.lines() {
         let l = line?;
         let mut pairs = l.split(',')
@@ -16,8 +17,14 @@ fn solve<T: BufRead>(input: T) -> Result<Vec<i64>> {
         if (a.0 <= b.0 && a.1 >= b.1) || (b.0 <= a.0 && b.1 >= a.1) {
             res1 += 1;
         }
+        
+        // part 2
+        let overlaps = |a: (_, _), b: (_, _)| (a.0 <= b.0 && a.1 >= b.0) || (a.0 <= b.1 && a.1 >= b.1);
+        if overlaps(a, b) || overlaps(b, a) {
+            res2 += 1;
+        }
     }
-    Ok(vec![res1])
+    Ok(vec![res1, res2])
 }
 
 fn main() -> Result<()> {
