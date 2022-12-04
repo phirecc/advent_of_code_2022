@@ -1,5 +1,4 @@
-# Advent of Code solutions
-## 2022
+# Advent of Code 2022 solutions
 Each day's solution lives in its own file in `src/bin/dayXX.rs`.
 
 Solutions read from `stdin` by default. They also include tests, which use `data/dayXX_{example,input}.txt`.
