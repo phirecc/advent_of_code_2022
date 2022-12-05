@@ -29,6 +29,7 @@ fn solve<T: BufRead>(input: T) -> Result<Vec<String>> {
             idx += 1;
         }
     }
+    let mut stacks2 = stacks.clone();
     lines.next();
     // Parse and apply moves
     for line in lines {
@@ -41,9 +42,14 @@ fn solve<T: BufRead>(input: T) -> Result<Vec<String>> {
             let x = stacks[from].pop().unwrap();
             stacks[to].push(x);
         }
+        // part 2
+        let r = stacks2[from].len()-n..;
+        let mut dest = std::mem::take(&mut stacks2[to]);
+        dest.extend(stacks2[from].drain(r));
+        stacks2[to] = dest;
     }
     let sol = |x: Vec<Vec<_>>| x.iter().map(|s| s.last().unwrap()).collect();
-    Ok(vec![sol(stacks)])
+    Ok(vec![sol(stacks), sol(stacks2)])
 }
 
 fn main() -> Result<()> {
@@ -58,10 +64,10 @@ mod test {
     use super::*;
     #[test]
     fn example() {
-        assert_eq!(solve(include_bytes!("../../data/day05_example.txt").as_slice()).unwrap(), ["CMZ"]);
+        assert_eq!(solve(include_bytes!("../../data/day05_example.txt").as_slice()).unwrap(), ["CMZ", "MCD"]);
     }
     #[test]
     fn input() {
-        assert_eq!(solve(include_bytes!("../../data/day05_input.txt").as_slice()).unwrap(), ["PTWLTDSJV"]);
+        assert_eq!(solve(include_bytes!("../../data/day05_input.txt").as_slice()).unwrap(), ["PTWLTDSJV", "WZMFVGGZP"]);
     }
 }
