@@ -39,10 +39,10 @@ mod test {
     use super::*;
     #[test]
     fn example() {
-        assert_eq!(solve(include_bytes!("../../data/day04_example.txt").as_slice()).unwrap(), [2]);
+        assert_eq!(solve(include_bytes!("../../data/day04_example.txt").as_slice()).unwrap(), [2, 4]);
     }
     #[test]
     fn input() {
-        assert_eq!(solve(include_bytes!("../../data/day04_input.txt").as_slice()).unwrap(), [534]);
+        assert_eq!(solve(include_bytes!("../../data/day04_input.txt").as_slice()).unwrap(), [534, 841]);
     }
 }
