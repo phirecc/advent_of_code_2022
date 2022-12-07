@@ -9,8 +9,8 @@ fn solve<T: BufRead>(input: T) -> Result<Vec<i64>> {
         let l = line?;
         let mut pairs = l.split(',')
             .map(|s| {
-                let x: Vec<i64> = s.split('-').map(|a| a.parse().unwrap()).collect();
-                (x[0], x[1])
+                let mut it = s.split('-').map(|a| a.parse::<i64>().unwrap());
+                (it.next(), it.next())
             });
         let a = pairs.next().unwrap();
         let b = pairs.next().unwrap();
