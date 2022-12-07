@@ -101,9 +101,15 @@ fn solve<T: BufRead>(input: T) -> Result<Vec<usize>> {
         }
     }
     let mut buf = Vec::new();
-    directory_sizes(&fs, iroot, &mut buf);
+    let total_size = directory_sizes(&fs, iroot, &mut buf);
+    let sol1: usize = buf.iter().filter(|x| **x <= 100000).sum();
+    buf.sort();
+    let sol2 = buf.iter().find(|x| 70000000 - total_size + **x >= 30000000).unwrap();
 
-    Ok(vec![buf.into_iter().filter(|x| *x <= 100000).sum()])
+    Ok(vec![
+       sol1,
+       *sol2
+    ])
 }
 
 fn main() -> Result<()> {
@@ -118,10 +124,10 @@ mod test {
     use super::*;
     #[test]
     fn example() {
-        assert_eq!(solve(include_bytes!("../../data/day07_example.txt").as_slice()).unwrap(), [95437]);
+        assert_eq!(solve(include_bytes!("../../data/day07_example.txt").as_slice()).unwrap(), [95437, 24933642]);
     }
     #[test]
     fn input() {
-        assert_eq!(solve(include_bytes!("../../data/day07_input.txt").as_slice()).unwrap(), [1084134]);
+        assert_eq!(solve(include_bytes!("../../data/day07_input.txt").as_slice()).unwrap(), [1084134, 6183184]);
     }
 }
