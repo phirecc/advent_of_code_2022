@@ -3,7 +3,7 @@ use std::io::BufRead;
 
 use anyhow::{Result, bail};
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Clone)]
 enum PacketMember {
     Raw(i32),
     Array(Vec<PacketMember>),
@@ -60,8 +60,9 @@ fn compare_members(left: &PacketMember, right: &PacketMember) -> ComparisonResul
 
 fn solve<T: BufRead>(input: T) -> Result<Vec<usize>> {
     let mut part1 = 0;
+    let mut part2 = Vec::new();
     for (i, pair) in input.lines().map(|s| s.unwrap()).filter(|s| !s.is_empty()).array_chunks::<2>().enumerate() {
-        let pair = pair.map(|p| {
+        let mut pair = pair.map(|p| {
             let mut cur = Box::new(PacketMember::Array(Vec::new()));
             let mut parents = Vec::new();
             let mut num = None;
@@ -112,10 +113,27 @@ fn solve<T: BufRead>(input: T) -> Result<Vec<usize>> {
         if res == ComparisonResult::RightOrder {
             part1 += i+1;
         }
-
+        part2.append(&mut pair[0]);
+        part2.append(&mut pair[1]);
+    }
+    let m1 = PacketMember::Array(vec![PacketMember::Array(vec![PacketMember::Raw(2)])]);
+    let m2 = PacketMember::Array(vec![PacketMember::Array(vec![PacketMember::Raw(6)])]);
+    part2.push(m1.clone());
+    part2.push(m2.clone());
+    part2.sort_by(|a, b| match compare_members(a, b){
+        ComparisonResult::Continue => std::cmp::Ordering::Equal,
+        ComparisonResult::RightOrder => std::cmp::Ordering::Less,
+        ComparisonResult::WrongOrder => std::cmp::Ordering::Greater,
+    });
+    let mut sol2 = 1;
+    for (i, x) in part2.iter().enumerate() { 
+        if *x == m1 || *x == m2 {
+            sol2 *= i+1;
+        }
     }
     Ok(vec![
-       part1
+       part1,
+       sol2
     ])
 }
 
@@ -131,10 +149,10 @@ mod test {
     use super::*;
     #[test]
     fn example() {
-        assert_eq!(solve(include_bytes!("../../data/day13_example.txt").as_slice()).unwrap(), [13]);
+        assert_eq!(solve(include_bytes!("../../data/day13_example.txt").as_slice()).unwrap(), [13, 140]);
     }
     #[test]
     fn input() {
-        assert_eq!(solve(include_bytes!("../../data/day13_input.txt").as_slice()).unwrap(), [5366]);
+        assert_eq!(solve(include_bytes!("../../data/day13_input.txt").as_slice()).unwrap(), [5366, 23391]);
     }
 }
