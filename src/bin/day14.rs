@@ -26,6 +26,7 @@ fn solve<T: BufRead>(input: T) -> Result<Vec<usize>> {
         }
     }
     let mut part1 = 0;
+    let mut map2 = map.clone();
     let start = (500, 0);
     'outer: loop {
         let mut pos = start;
@@ -50,8 +51,34 @@ fn solve<T: BufRead>(input: T) -> Result<Vec<usize>> {
             }
         }
     }
+    // part 2
+    let mut part2 = 0;
+    'outer: loop {
+        let mut pos = start;
+        loop {
+            let candidates = [(pos.0, pos.1+1), (pos.0-1, pos.1+1), (pos.0+1, pos.1+1)];
+            let mut new_pos = None;
+            for c in candidates {
+                if !map2.contains_key(&c) && c.1 != max_y+2 {
+                    new_pos = Some(c);
+                    break;
+                }
+            }
+            if let Some(p) = new_pos {
+                pos = p;
+            } else {
+                part2 += 1;
+                map2.insert(pos, 1);
+                if pos == start {
+                    break 'outer;
+                }
+                break;
+            }
+        }
+    }
     Ok(vec![
-       part1
+       part1,
+       part2
     ])
 }
 
@@ -67,10 +94,10 @@ mod test {
     use super::*;
     #[test]
     fn example() {
-        assert_eq!(solve(include_bytes!("../../data/day14_example.txt").as_slice()).unwrap(), [24]);
+        assert_eq!(solve(include_bytes!("../../data/day14_example.txt").as_slice()).unwrap(), [24, 93]);
     }
     #[test]
     fn input() {
-        assert_eq!(solve(include_bytes!("../../data/day14_input.txt").as_slice()).unwrap(), [768]);
+        assert_eq!(solve(include_bytes!("../../data/day14_input.txt").as_slice()).unwrap(), [768, 26686]);
     }
 }
